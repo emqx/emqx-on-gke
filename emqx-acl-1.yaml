@@ -10,12 +10,33 @@ spec:
       log.console.level = info
       license.key = '***'
   revisionHistoryLimit: 3
+  updateStrategy:
+    evacuationStrategy:
+      connEvictRate: 1000
+      sessEvictRate: 1000
+      waitTakeover: 10
+    initialDelaySeconds: 10
+    type: Recreate
   coreTemplate:
     spec:
       replicas: 2
+      extraVolumes:
+        - name: emqx-acl
+          secret:
+            secretName: emqx-acl
+      extraVolumeMounts:
+        - name: emqx-acl
+          mountPath: /mnt/acl
   replicantTemplate:
     spec:
       replicas: 2
+      extraVolumes:
+        - name: emqx-acl
+          secret:
+            secretName: emqx-acl
+      extraVolumeMounts:
+        - name: emqx-acl
+          mountPath: /mnt/acl
   listenersServiceTemplate:
     metadata:
       annotations:

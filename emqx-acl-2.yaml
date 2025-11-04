@@ -16,10 +16,11 @@ spec:
           {
             type = file
             enable = true
-            path = "/mounted/acl/acl.txt"
+            path = "/mnt/acl/acl.txt"
           }
         ]
       }
+
   revisionHistoryLimit: 3
   updateStrategy:
     evacuationStrategy:
@@ -37,15 +38,7 @@ spec:
             secretName: emqx-acl
       extraVolumeMounts:
         - name: emqx-acl
-          mountPath: /mounted/acl
-      volumeClaimTemplates:
-        ## more information about storage classes: https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes#storageclasses
-        storageClassName: standard
-        resources:
-          requests:
-            storage: 10Gi
-        accessModes:
-        - ReadWriteOnce
+          mountPath: /mnt/acl
   replicantTemplate:
     spec:
       replicas: 2
@@ -55,7 +48,7 @@ spec:
             secretName: emqx-acl
       extraVolumeMounts:
         - name: emqx-acl
-          mountPath: /mounted/acl
+          mountPath: /mnt/acl
   listenersServiceTemplate:
     metadata:
       annotations:
