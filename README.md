@@ -42,7 +42,16 @@ kubectl -n emqx get svc
 
 ## Operational check
 
+```bash
+DASHBOARD_URL=$(kubectl -n emqx get svc emqx-dashboard -o json | jq '.status.loadBalancer.ingress[0].ip' -r)
+curl -u admin:public "http://$DASHBOARD_URL:18083/api/v5/status"
+Node emqx@emqx-core-5959b8bb94-0.emqx-headless.emqx.svc.cluster.local is started
+emqx is running
+```
+
 ## Deploy test clients
+
+## Add ACLs and Rules via config change
 
 ## Enable data persistence
 
