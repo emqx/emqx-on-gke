@@ -40,6 +40,12 @@ kubectl -n emqx wait --for=condition=Ready emqx emqx --timeout=120s
 kubectl -n emqx get svc
 ```
 
+## Rebalance after change in cluster topology
+
+```bash
+kubectl apply -f rebalance.yaml
+```
+
 ## Cleanup
 
 ```bash
