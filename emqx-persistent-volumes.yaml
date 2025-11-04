@@ -1,0 +1,42 @@
+apiVersion: apps.emqx.io/v2beta1
+kind: EMQX
+metadata:
+  name: emqx
+  namespace: emqx
+spec:
+  image: emqx/emqx-enterprise:6.0.0
+  config:
+    data: |
+      log.console.level = info
+      license.key = evaluation
+  revisionHistoryLimit: 3
+  updateStrategy:
+    evacuationStrategy:
+      connEvictRate: 1000
+      sessEvictRate: 1000
+      waitTakeover: 10
+    initialDelaySeconds: 10
+    type: Recreate
+  coreTemplate:
+    spec:
+      replicas: 2
+      volumeClaimTemplates:
+        ## more information about storage classes: https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes#storageclasses
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 10Gi
+        accessModes:
+        - ReadWriteOnce
+  replicantTemplate:
+    spec:
+      replicas: 4
+  listenersServiceTemplate:
+    metadata:
+      annotations:
+        networking.gke.io/load-balancer-type: "Internal"
+    spec:
+      type: LoadBalancer
+  dashboardServiceTemplate:
+    spec:
+      type: LoadBalancer
