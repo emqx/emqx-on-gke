@@ -44,7 +44,6 @@ kubectl -n emqx get svc
 
 ```bash
 kubectl delete -f emqx.yaml
-gcloud compute instances delete $(seq -s ' ' -f 'loadgen-%g' 1 5)
 gcloud container clusters delete emqx
 ```
 

@@ -1,0 +1,33 @@
+apiVersion: apps.emqx.io/v2beta1
+kind: EMQX
+metadata:
+  name: emqx
+  namespace: emqx
+spec:
+  image: emqx/emqx-enterprise:6.0.0
+  config:
+    data: |
+      log.console.level = info
+  revisionHistoryLimit: 3
+  updateStrategy:
+    evacuationStrategy:
+      connEvictRate: 1000
+      sessEvictRate: 1000
+      waitTakeover: 10
+    initialDelaySeconds: 10
+    type: Recreate
+  coreTemplate:
+    spec:
+      replicas: 2
+  replicantTemplate:
+    spec:
+      replicas: 2
+  listenersServiceTemplate:
+    metadata:
+      annotations:
+        networking.gke.io/load-balancer-type: "Internal"
+    spec:
+      type: LoadBalancer
+  dashboardServiceTemplate:
+    spec:
+      type: LoadBalancer
