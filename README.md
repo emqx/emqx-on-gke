@@ -110,22 +110,6 @@ authorization {
 }
 ```
 
-## Enable data persistence
-
-```bash
-kubectl apply -f emqx-persistent-volumes.yaml
-kubectl -n emqx wait --for=condition=Ready emqx emqx --timeout=120s
-core0="$(kubectl get pods -l 'apps.emqx.io/instance=emqx,apps.emqx.io/db-role=core' -o json | jq --raw-output '.items[0].metadata.name')"
-kubectl -n emqx exec -it ${core0} -- emqx ctl ds info
-```
-
-It may happen that old core nodes are still in the cluster after enabling data persistence. In this case, you need to manually kick them out of the cluster (mind the different IDs):
-
-```bash
-kubectl -n emqx exec -it ${core0} -- emqx ctl cluster force-leave emqx@emqx-core-<***>-0.emqx-headless.emqx.svc.cluster.local
-kubectl -n emqx exec -it ${core0} -- emqx ctl cluster force-leave emqx@emqx-core-<***>-1.emqx-headless.emqx.svc.cluster.local
-```
-
 ## Rebalance after change in cluster topology
 
 ```bash
