@@ -6,8 +6,6 @@ helm repo add jetstack https://charts.jetstack.io
 helm repo add emqx https://repos.emqx.io/charts
 helm repo update
 
-kubectl create namespace emqx
-
 helm upgrade --install cert-manager jetstack/cert-manager \
      --namespace emqx \
      --set namespace=emqx \

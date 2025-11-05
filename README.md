@@ -33,8 +33,8 @@ gcloud container clusters get-credentials emqx
 ## Deploy EMQX via EMQX Operator
 
 ```bash
-./install-emqx-operator.sh
 kubectl create namespace emqx
+./install-emqx-operator.sh
 kubectl apply -f emqx.yaml
 kubectl -n emqx wait --for=condition=Ready emqx emqx --timeout=120s
 kubectl -n emqx get svc
@@ -43,10 +43,10 @@ kubectl -n emqx get svc
 Retrieve IP address of EMQX Dashboard:
 
 ```bash
-kubectl -n emqx get svc emqx-dashboard -o json | jq '.status.loadBalancer.ingress[0].ip' -r
+kubectl -n emqx get svc emqx-dashboard -o json | jq '.status.loadBalancer.ingress[0].ip'
 ```
 
-Now you can open this IP address in the browser by visiting `http://<DASHBOARD_IP>:18083` (default credentials: admin/public).
+Now you can open this IP address in the browser by visiting `http://<DASHBOARD_IP>:18083` (default credentials: `admin`/`public`).
 
 ## Operational check
 
@@ -57,7 +57,12 @@ Node emqx@emqx-core-***-0.emqx-headless.emqx.svc.cluster.local is started
 emqx is running
 ```
 
-## Deploy test clients
+## Deploy test client
+
+```bash
+kubectl apply -f mqttx.yaml
+kubectl -n emqx logs -f mqttx-bbd49ff58-zbtpx mqttx-cli
+```
 
 ## Add ACLs via config change
 
@@ -130,6 +135,7 @@ kubectl apply -f rebalance.yaml
 ## Cleanup
 
 ```bash
+kubectl delete -f mqttx.yaml
 kubectl delete -f emqx.yaml
 gcloud container clusters delete emqx
 ```

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqttx
+  namespace: emqx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mqttx
+  template:
+    metadata:
+      labels:
+        app: mqttx
+    spec:
+      containers:
+      - name: mqttx-cli
+        image: emqx/mqttx-cli:latest
+        # This command will run a continuous simulation.
+        # -sc tesla: Uses the built-in 'tesla' scenario.
+        # -c 10: Simulates 10 clients.
+        command: ["mqttx"]
+        args:
+          - "simulate"
+          - "-sc"
+          - "tesla"
+          - "-c"
+          - "10"
+          - "-h"
+          - "emqx-listeners"
+          - "-p"
+          - "1883"
