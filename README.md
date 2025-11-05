@@ -12,7 +12,7 @@
 gcloud init
 gcloud auth login
 gcloud components update
-export PROJECT=cs-poc-yfdcyvmaxqv0fixentos0bz
+export PROJECT=<your project id>
 export REGION=europe-west1
 export ZONE=europe-west1-b
 gcloud auth application-default set-quota-project $PROJECT
@@ -53,7 +53,7 @@ Now you can open this IP address in the browser by visiting `http://<DASHBOARD_I
 ```bash
 DASHBOARD_URL=$(kubectl -n emqx get svc emqx-dashboard -o json | jq '.status.loadBalancer.ingress[0].ip' -r)
 curl -u admin:public "http://$DASHBOARD_URL:18083/api/v5/status"
-Node emqx@emqx-core-***-0.emqx-headless.emqx.svc.cluster.local is started
+Node emqx@emqx-core-<***>-0.emqx-headless.emqx.svc.cluster.local is started
 emqx is running
 ```
 
@@ -61,7 +61,7 @@ emqx is running
 
 ```bash
 kubectl apply -f mqttx.yaml
-kubectl -n emqx logs -f mqttx-bbd49ff58-zbtpx mqttx-cli
+kubectl -n emqx logs -f mqttx-<***>-<***> mqttx-cli
 ```
 
 ## Add ACLs via config change
@@ -122,8 +122,8 @@ kubectl -n emqx exec -it ${core0} -- emqx ctl ds info
 It may happen that old core nodes are still in the cluster after enabling data persistence. In this case, you need to manually kick them out of the cluster (mind the different IDs):
 
 ```bash
-kubectl -n emqx exec -it ${core0} -- emqx ctl cluster force-leave emqx@emqx-core-5b46dff5d6-0.emqx-headless.emqx.svc.cluster.local
-kubectl -n emqx exec -it ${core0} -- emqx ctl cluster force-leave emqx@emqx-core-5b46dff5d6-1.emqx-headless.emqx.svc.cluster.local
+kubectl -n emqx exec -it ${core0} -- emqx ctl cluster force-leave emqx@emqx-core-<***>-0.emqx-headless.emqx.svc.cluster.local
+kubectl -n emqx exec -it ${core0} -- emqx ctl cluster force-leave emqx@emqx-core-<***>-1.emqx-headless.emqx.svc.cluster.local
 ```
 
 ## Rebalance after change in cluster topology
@@ -146,7 +146,7 @@ gcloud container clusters delete emqx
 # watch events
 kubectl get events --all-namespaces --watch
 # ssh on the GKE pool node, e.g.
-gcloud compute ssh gke-emqx-default-pool-8ffb4312-bjcg
+gcloud compute ssh gke-emqx-default-pool-<***>-bjcg
 # list pods
 crictl pods
 # list containers
