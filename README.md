@@ -11,6 +11,7 @@
 ```bash
 gcloud init
 gcloud auth login
+gcloud auth application-default login
 gcloud components update
 export PROJECT=<your project id>
 export REGION=europe-west1
