@@ -11,17 +11,10 @@
 ```bash
 gcloud init
 gcloud auth login
-gcloud auth application-default login
 gcloud components update
-export PROJECT=<your project id>
-export REGION=europe-west1
-export ZONE=europe-west1-b
-gcloud auth application-default set-quota-project $PROJECT
-gcloud config set project $PROJECT
-gcloud services enable container.googleapis.com
-gcloud services enable compute.googleapis.com
-gcloud config set compute/region $REGION
-gcloud config set compute/zone $ZONE
+gcloud config set project <your project id>
+gcloud config set compute/region <your region, e.g. europe-west1>
+gcloud config set compute/zone <your zone, e.g. europe-west1-b>
 ```
 
 ## Create EMQX cluster in GKE
