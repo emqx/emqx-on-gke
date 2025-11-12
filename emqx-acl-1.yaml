@@ -20,6 +20,14 @@ spec:
   coreTemplate:
     spec:
       replicas: 2
+      volumeClaimTemplates:
+      ## more information about storage classes: https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes#storageclasses
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 10Gi
+        accessModes:
+        - ReadWriteOnce
       extraVolumes:
         - name: emqx-acl
           secret:

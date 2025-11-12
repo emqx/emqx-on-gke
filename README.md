@@ -58,6 +58,8 @@ kubectl apply -f mqttx.yaml
 kubectl -n emqx logs -f mqttx-<***>-<***> mqttx-cli
 ```
 
+It will automatically start sending traffic to EMQX.
+
 ## Add ACLs via config change
 
 First, create a secret from acl.txt, and make sure it propagated to all nodes:
@@ -65,13 +67,19 @@ First, create a secret from acl.txt, and make sure it propagated to all nodes:
 ```bash
 kubectl -n emqx create secret generic emqx-acl --from-file=./acl.txt
 kubectl -n emqx apply -f emqx-acl-1.yaml
-kubectl -n emqx wait --for=condition=Ready emqx emqx --timeout=120s
+kubectl -n emqx wait --for=condition=Ready emqx emqx --timeout=10m
 ```
 
-Then, apply config change:
+Then, apply the config change:
 
 ```bash
 kubectl -n emqx apply -f emqx-acl-2.yaml
+```
+
+Check emqx-operator logs:
+
+```bash
+kubectl -n emqx logs -l app.kubernetes.io/name=emqx-operator -f
 ```
 
 Verify:
@@ -106,8 +114,12 @@ authorization {
 
 ## Rebalance after change in cluster topology
 
+Note, it may report `nothing_to_balance`:
+
 ```bash
-kubectl apply -f rebalance.yaml
+core0=$(kubectl -n emqx get pods -l 'apps.emqx.io/instance=emqx,apps.emqx.io/db-role=core' -o json | jq --raw-output '.items[0].metadata.name')
+kubectl -n emqx exec -it $core0 -- emqx ctl rebalance start
+kubectl -n emqx exec -it $core0 -- emqx ctl rebalance status
 ```
 
 ## Cleanup
