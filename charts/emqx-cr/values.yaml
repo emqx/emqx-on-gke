@@ -1,0 +1,31 @@
+nameOverride: ""
+fullnameOverride: "emqx"
+
+namespace: emqx
+
+image:
+  repository: emqx/emqx-enterprise
+  tag: "6.0.0"
+  pullPolicy: IfNotPresent
+
+config:
+  logConsoleLevel: warning
+  licenseKey: "..."
+
+core:
+  replicas: 2
+  storageClassName: standard
+  storageSize: 10Gi
+
+replicant:
+  replicas: 2
+
+listenersService:
+  type: LoadBalancer
+  annotations:
+    networking.gke.io/load-balancer-type: "Internal"
+
+dashboardService:
+  type: LoadBalancer
+
+extraConfig: ""

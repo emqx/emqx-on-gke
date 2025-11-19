@@ -1,0 +1,43 @@
+apiVersion: apps.emqx.io/v2beta1
+kind: EMQX
+metadata:
+  name: {{ include "emqx-cr.fullname" . }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+spec:
+  image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+  imagePullPolicy: {{ .Values.image.pullPolicy }}
+  config:
+    data: |
+      log.console.level = {{ .Values.config.logConsoleLevel }}
+      license.key = {{ .Values.config.licenseKey }}
+
+{{- if .Values.extraConfig }}
+{{ .Values.extraConfig | indent 6 }}
+{{- end }}
+  revisionHistoryLimit: 3
+  coreTemplate:
+    spec:
+      replicas: {{ .Values.core.replicas }}
+      volumeClaimTemplates:
+        storageClassName: {{ .Values.core.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.core.storageSize }}
+        accessModes:
+        - ReadWriteOnce
+  replicantTemplate:
+    spec:
+      replicas: {{ .Values.replicant.replicas }}
+  listenersServiceTemplate:
+{{- if .Values.listenersService.annotations }}
+    metadata:
+      annotations:
+{{ toYaml .Values.listenersService.annotations | indent 8 }}
+{{- end }}
+    spec:
+      type: {{ .Values.listenersService.type }}
+  dashboardServiceTemplate:
+    spec:
+      type: {{ .Values.dashboardService.type }}

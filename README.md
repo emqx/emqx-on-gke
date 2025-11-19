@@ -26,10 +26,26 @@ gcloud container clusters get-credentials emqx
 
 ## Deploy EMQX via EMQX Operator
 
+Install EMQX Operator
 ```bash
 kubectl create namespace emqx
 ./install-emqx-operator.sh
+```
+
+Install EMQX via Helm Chart
+
+```bash
+helm upgrade --install emqx charts/emqx-cr --namespace emqx --create-namespace
+```
+
+**OR** install EMQX via `kubectl apply`
+
+```bash
 kubectl apply -f emqx.yaml
+```
+
+Wait for EMQX to be ready and get services:
+```bash
 kubectl -n emqx wait --for=condition=Ready emqx emqx --timeout=120s
 kubectl -n emqx get svc
 ```
@@ -59,6 +75,50 @@ kubectl -n emqx logs -f mqttx-<***>-<***> mqttx-cli
 ```
 
 It will automatically start sending traffic to EMQX.
+
+## Test EMQX updates via Helm
+
+To reproduce the customer scenario where Helm is used instead of `kubectl apply`, a minimal chart lives in `charts/emqx-cr`. The chart templates the same EMQX custom resource (`fullnameOverride` defaults to `emqx`) so Helm upgrades should trigger the operator.
+
+Initial install (or takeover of an existing `emqx` resource):
+
+```bash
+helm upgrade --install emqx charts/emqx-cr \
+  --namespace emqx \
+  --create-namespace
+```
+
+You can now drive updates through Helm by changing values. For quick experiments you can use `--set`, e.g.:
+
+```bash
+# Flip the console log level to debug
+helm upgrade emqx charts/emqx-cr \
+  --namespace emqx \
+  --set config.logConsoleLevel=debug
+```
+
+For more complex changes (config snippets, listener annotations, storage sizes, replica counts, etc.) drop a values file:
+
+```bash
+cat <<'EOF' > /tmp/emqx-values.yaml
+config:
+  logConsoleLevel: warning
+extraConfig: |
+  dashboard.listeners.http.bind = 18083
+core:
+  replicas: 3
+EOF
+
+helm upgrade emqx charts/emqx-cr \
+  --namespace emqx \
+  -f /tmp/emqx-values.yaml
+```
+
+This allows you to observe whether the operator reconciles the changes when they originate from Helm. Uninstall when you are done:
+
+```bash
+helm uninstall emqx -n emqx
+```
 
 ## Add ACLs via config change
 
