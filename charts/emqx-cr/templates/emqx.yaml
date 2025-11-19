@@ -11,7 +11,7 @@ spec:
   config:
     data: |
       log.console.level = {{ .Values.config.logConsoleLevel }}
-      license.key = {{ .Values.config.licenseKey }}
+      license.key = {{ .Values.config.licenseKey | quote }}
 
 {{- if .Values.extraConfig }}
 {{ .Values.extraConfig | indent 6 }}
